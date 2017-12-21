@@ -1,0 +1,29 @@
+﻿@model List<Dictionary<string, object>>
+@{
+    ViewBag.Title = "ViewAdmin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<table class="table">
+    @foreach (var row in Model.FirstOrDefault())
+    {
+        <th>@row.Key</th>
+    }
+    @foreach (var row in Model)
+    {
+        <tr>
+            
+            @foreach (var column in row)
+            {
+                <td>@column.Value</td>
+               
+            }
+            @foreach (var column in row)
+            {
+                int userID = Int32.Parse(string.Format("{0}",@column.Value));
+                <td>@Html.ActionLink("View", "DetailFormByUserId", "Questions", new { id = @ViewBag.IdForm, userId = @column.Value }, null)</td>
+                break;
+            }
+           
+        </tr>
+    }
+</table>

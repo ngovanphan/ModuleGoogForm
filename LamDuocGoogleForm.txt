@@ -1,0 +1,8 @@
+﻿Những chức năng đã thực hiện được:
++ tạo Form, tạo question theo form.
++ Delete Form: thì delete tất cả question của form đó và các AnwserDetail của question đó.
++ Tạo Question: 5 type: Radio,CheckBox,Text,Date,Dropdown.
++ Edit Question, Duplicate.
++ Delete Question thì delete AnwserDetail của question đó.
++ ViewAdmin có sử dụng pivor table và có thể xem chi tiết Form của user ( type checkbox khi check nhiều option thì câu trả lời<Detail> các option được cách nhau bằng dấu ";" ).
++ View EndUser.

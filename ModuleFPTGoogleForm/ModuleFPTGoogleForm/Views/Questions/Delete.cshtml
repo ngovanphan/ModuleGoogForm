@@ -1,0 +1,63 @@
+﻿@model MvcGoogleForm.Models.Question
+
+@{
+    ViewBag.Title = "DeleteQuestions";
+}
+
+<h2>DeleteQuestions</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Question</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FormId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FormId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.QuestionName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.QuestionName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Answer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Answer)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            <input type="button" id="goBack" value="back" />
+        </div>
+    }
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $("#goBack").click(function () {
+        window.history.back();
+    });
+</script>

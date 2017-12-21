@@ -1,0 +1,401 @@
+﻿@model MvcGoogleForm.Models.Question
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" id="addFieldEdit">
+        <h4>Question</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.QuestionId)
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.QuestionId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.QuestionId, new { htmlAttributes = new { @class = "form-control QuestionId", @disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.QuestionName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.QuestionName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.QuestionName, new { htmlAttributes = new { @class = "form-control QuestionName" } })
+                @Html.ValidationMessageFor(model => model.QuestionName, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <span id="fe_QuestionName" style="color:red;"></span>
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.Answer, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Answer, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            @*<div class="col-md-10">
+                    @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+                </div>*@
+            <div class="col-md-9">
+                <select class="form-control" id="typeOptionEdit" name="typeOption">
+                    <option value="Text">Text</option>
+                    <option value="CheckBox">CheckBox</option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            @Html.LabelFor(model => model.FormId, "FormId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("FormId", null, htmlAttributes: new { @class = "form-control FormID" })
+                @Html.ValidationMessageFor(model => model.FormId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group" id="addAppendEdit">
+            @Html.LabelFor(model => model.Answer, htmlAttributes: new { @class = "control-label col-md-2" })
+            @*<div class="col-md-10">
+                    <input type="text" id="textAnwserEdit1" placeholder="Anwser1" class="text-danger textAnwser1"  />
+                    <input type="button" class="btn-success addFiel" value="Add" id="btnAddFieldEdit" />
+                </div>*@
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Answer, new { htmlAttributes = new { @class = "textAnwserEdit1", @id = "textAnwserEdit1" } })
+                @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
+                <input type="button" class="btn-success addFiel" value="Add" id="btnAddFieldEdit" hidden/>
+                <input type="button" class="btn-success addKhac" value="Thêm khác" id="btnAddKhac" hidden />
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <span id="fe_Anwser" style="color:red;"></span>
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group form-horizontal" id="addOther">
+
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="Save" class="btn btn-success" id="Editsubmit" />
+            <input type="button" value="Reset" class="btn btn-danger" id="btnReset"/>
+        </div>
+    </div>
+}
+
+<div>
+   <input type="button" id="goBack" value="Back" />
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+    var counter = 1;
+    var tempString="";
+    var tempId ="";
+    var mucKhac="";
+    var anwser = "";
+    var subitem = "";
+    var itemKhacValue ="";
+    $(document).ready(function () {
+        var intType = @ViewBag.Type;
+        @*var anwserTT = @ViewBag.Anwser;
+        var anwserVal = anwserTT.valueOf();
+        $("#textAnwserEdit").val() = anwserVal;
+        var soAnwser=0;*@
+
+        if(intType == 2)
+        {
+
+            document.getElementById('typeOptionEdit').value = 'CheckBox';
+            $("#btnAddFieldEdit").removeAttr("hidden");
+        }
+        var temp = $("#textAnwserEdit1").val();
+        var lengthString = temp.length;
+        var tempLength = temp.split(";").length;
+        var lastTempLength = temp.lastIndexOf(";");
+        for (var i = 1; i < tempLength; i++) {
+            var newFiel = document.createElement('div');
+
+            newFiel.innerHTML = "<div class='form-group fieldsAddEdit' id='fieldAddTEdit" + (i + 1) + "'><div class='col-md-2 fieldAddTEdit"+(i+1)+"' ></div>"
+                              + "<div class='col-md-10' > <input type='text' id='textAnwserEdit" + (i+1) + "' placeholder='Anwser " + (i+1) + "' class='text-danger textAnwserEdit"+(i+1)+"' />"
+                              + "<input type='button' class='btn-danger removeFielEdit' value='Remove' /> </div>"
+                              +"<div class='col-md-offset-2 col-md-10'>"
+                              + "<span id='fe_Anwser"+(i+1)+"' style='color:red;'></span>"
+                              +"</div></div>";
+            counter++;
+            $(newFiel).appendTo('#addFieldEdit');
+
+        }
+        var tempKhac = temp.slice(0,8);
+        itemKhacValue = temp.slice(8,temp.indexOf(" "));
+        if(tempKhac.localeCompare("muckhac_")==0)
+        {
+            anwser = temp.slice(0,temp.indexOf(" ")+1);
+            temp = temp.slice(temp.indexOf(" ")+1,temp.length);
+            $("#btnAddKhac").hide();
+            var newFiel = document.createElement('div');
+            newFiel.innerHTML = "<div class='form-group fieldAddKhac' id='fieldAddKhac '><div class='col-md-2'></div>"
+                      + "<div class='col-md-10'> <input type='text'  placeholder='Mục Khác' class='text-danger' disabled />"
+                      + "<input type='button' class='btn-danger removeFielKhac' value='Remove' /> </div></div>";
+                      
+
+
+            $(newFiel).appendTo('#addOther');
+            $(".removeFielKhac").click(function () {
+
+
+                $(this).parents('.fieldAddKhac').remove();
+                $("#btnAddKhac").show();
+                anwser="";
+                if(itemKhacValue.localeCompare(subitem)==0)
+                {
+                    tempString="";
+                }
+            });
+  
+        }
+        else
+        {
+            if(intType == 2)
+            {
+                $('#addAppendEdit').find('#btnAddKhac').removeAttr('hidden');
+            }
+           
+        }
+        var checkedInt = temp.indexOf("[");
+            
+        switch (checkedInt) {
+            case -1:
+                temp = temp;
+                break;
+            default:
+                tempString = temp.slice(checkedInt-1,temp.length);
+                subitem = tempString.slice(2,tempString.length-8);
+                temp = temp.replace(tempString,"");
+                break;
+        
+        }
+        
+        //alert(temp + tempString);
+        switch (intType) {
+            case 2:
+                for (var j = 1; j <= counter; j++) {
+                    var firstTempLength = temp.indexOf(";");
+                    var subString;
+            
+                    switch (firstTempLength) {
+                        case -1:
+                            subString = temp.slice(0,temp.length);
+                            $("#textAnwserEdit"+(j)).val(subString);
+                            break;
+                        default:
+                            subString = temp.slice(0,firstTempLength);
+                            $("#textAnwserEdit"+(j)).val(subString);
+                            temp = temp.replace(temp.slice(0,firstTempLength+2),"");
+                            break;
+
+                    }
+                   
+                }
+                break;
+        
+        }
+       
+        $(".removeFielEdit").click(function () {
+            var IdRemove =$(this).parents('.fieldsAddEdit').attr('id');
+            tempId = IdRemove.slice(IdRemove.length-1,IdRemove.length);
+          
+            $(this).parents('.fieldsAddEdit').remove();
+           
+            counter--;
+        });
+       
+    });
+    $("#btnAddKhac").click(function () {
+        $("#btnAddKhac").hide();
+        var newFiel = document.createElement('div');
+        newFiel.innerHTML = "<div class='form-group fieldAddKhac' id='fieldAddKhac '><div class='col-md-2'></div>"
+                  + "<div class='col-md-10'> <input type='text'  placeholder='Mục Khác' class='text-danger' disabled />"
+                  + "<input type='button' class='btn-danger removeFielKhac' value='Remove' /> </div></div>";
+                      
+
+
+        $(newFiel).appendTo('#addOther');
+        anwser = "muckhac_ ";
+        $(".removeFielKhac").click(function () {
+
+
+            $(this).parents('.fieldAddKhac').remove();
+            $("#btnAddKhac").show();
+            anwser="";
+            if(itemKhacValue.localeCompare(subitem)==0)
+            {
+                tempString="";
+            }
+        });
+       
+    });
+    
+    $("#btnAddFieldEdit").click(function(e){
+
+        counter++;
+        var newFiel = document.createElement('div');
+        newFiel.innerHTML = "<div class='form-group fieldsAddEdit' id='fieldAddTEdit" + (counter) + "'><div class='col-md-2 fieldAddTEdit"+counter+"' ></div>"
+                          + "<div class='col-md-10'> <input type='text' id='textAnwserEdit" + (counter) + "' placeholder='Anwser " + (counter) + "' class='text-danger textAnwserEdit"+counter+"' />"
+                          + "<input type='button' class='btn-danger removeFielEdit' value='Remove' /> </div>"
+                          +"<div class='col-md-offset-2 col-md-10'>"
+                          + "<span id='fe_Anwser"+(counter)+"' style='color:red;'></span>"
+                          +"</div></div>";
+        $(newFiel).appendTo('#addFieldEdit');
+        $(".removeFielEdit").click(function () {
+
+            var IdRemove =$(this).parents('.fieldsAddEdit').attr('id');
+            tempId = IdRemove.slice(IdRemove.length-1,IdRemove.length);
+           
+            $(this).parents('.fieldsAddEdit').remove();
+            counter--;
+        });
+    });
+    $("#Editsubmit").click(function(){
+        var typeText = $("#typeOptionEdit option:selected").text();
+        var idQuestions = @ViewBag.Id;
+        var typeInt =1;
+       
+       
+        for (var i = 1; i <= counter; i++) {
+            if(i!=tempId)
+            {
+                if(i==1 && i == counter)
+                {
+                    anwser = anwser + $(".textAnwserEdit" + i).val() +tempString;
+                }
+                if(i>=1 && i<counter)
+                {
+                    anwser = anwser + $(".textAnwserEdit" + i).val() +"; ";
+                }
+                if(i!=1 && i==counter)
+                {
+                    anwser = anwser + $(".textAnwserEdit" + i).val() +tempString;
+                }
+            }
+            else
+            {
+                counter=counter+1;
+            }
+          
+            
+
+        }
+        checkName();
+        checkText();
+        checkCheckBox();
+        //alert(anwser);
+        switch (typeText) {
+            case 'Text':
+                typeInt = 1;
+               
+                if(checkName()== true && checkText() == true)
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("EditQuestions", "Questions", null)',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({
+                            QuestionId: parseInt($(".QuestionId").val()),
+                            QuestionName: $(".QuestionName").val(),
+                            Answer: anwser,
+                            Type: typeInt,
+                            FormId: parseInt($(".FormID option:selected").text())
+                        })
+
+                    });
+                    window.location.replace("/Forms/Question/"+parseInt($(".FormID option:selected").text())+"/");
+                }
+                break;
+            case 'CheckBox':
+                typeInt = 2;
+               
+                if(checkName()== true && checkText() == true && checkCheckBox()==true )
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("EditQuestions", "Questions", null)',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify({
+                            QuestionId: parseInt($(".QuestionId").val()),
+                            QuestionName: $(".QuestionName").val(),
+                            Answer: anwser,
+                            Type: typeInt,
+                            FormId: parseInt($(".FormID option:selected").text())
+                        })
+
+                    });
+                    window.location.replace("/Forms/Question/"+parseInt($(".FormID option:selected").text())+"/");
+                }
+                break;
+
+        }
+        //alert("Id: "+idQuestions+" Anwser: "+anwser + "tyep:"+typeInt);
+        
+        
+
+    });
+    $("#btnReset").click(function(){
+        window.location.reload();
+    });
+    function checkName()
+    {
+        if($("#QuestionName").val().length == 0){
+            $("#fe_QuestionName").html("*Required");
+            return false;
+        }
+        else
+        {
+            $("#fe_QuestionName").html("");
+            return true;
+        }
+    }
+    function checkText() {
+        if ($("#textAnwserEdit1").val().length == 0) {
+            $("#fe_Anwser").html("*Required");
+            return false;
+        }
+        else {
+            $("#fe_Anwser").html("");
+
+            return true;
+        }
+    };
+    function checkCheckBox() {
+        var b = true;
+        for (var i = 2; i <= counter; i++) {
+            if ($("#textAnwserEdit"+i).val().length != 0) {
+               
+                $("#fe_Anwser"+i).html("");
+               
+            }
+            else {
+                $("#fe_Anwser"+i).html("*Required");
+                b = false;
+               
+            }
+        }
+        return b;
+       
+    };
+    $("#goBack").click(function(){
+        window.location.replace("/Forms/Question/"+parseInt($(".FormID option:selected").text())+"/");
+    });
+</script>

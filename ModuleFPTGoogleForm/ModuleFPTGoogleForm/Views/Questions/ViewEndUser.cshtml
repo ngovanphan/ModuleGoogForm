@@ -1,0 +1,490 @@
+﻿
+@{
+    ViewBag.Title = "ViewEndUser";
+}
+<form>
+
+    <div class="form-horizontal" id="addQuestions">
+       <div class="form-horizontal" id="addMucKhac"></div>
+    </div>
+    <div class="form-horizontal">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <h4>UserID: </h4>
+                <input type="text" id="mailUser" class="text-danger" />
+            </div>
+           
+            <div>
+                <span id="fe_user" style="color:red;"></span>
+            </div>
+        </div>
+       
+    </div>
+    
+    <div class="form-group col-md-offset-2 col-md-10">
+        <input type="button" id="SubmitForm" value="Submit" class="btn btn-success" />
+    </div>
+
+</form>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    var t = 0;
+    var temp2;
+    var tempString;
+    var khacValue = "";
+
+    var tempKhac = "";
+    $(document).ready(function () {
+        $.ajax({
+            @*url: '/Forms/GetALLQuestions/' +@ViewBag.IdForm +"/" + $("#pageNumber").html(),*@
+            url: '@Url.Action("GetQuestionsByForm", "Questions", new { id = @ViewBag.IdForm })',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    if ((item.UserId == null || item.UserId.localeCompare("null") == 0))
+                    {
+                        var counter = 0;
+                        var l = 0;
+                        t++;
+                        var rows = "<div class='form-group'>"
+                            + "<div hidden><input type='text' id='id" + t + "' value='" + item.QuestionId + "'/><input type='text' id='name" + t + "' value='" + item.QuestionName + "'/> <input type='text' id='type" + t + "' value='" + item.Type + "'/><input type='text' id='formid" + t + "' value='" + item.FormId + "'/></div>"
+                            + "<div> <h4>" + item.QuestionName + " </h4> </div>";
+
+                        if (item.Type == 1) {
+                            rows += "<div> <input type='text' id='anwser" + t + "'/> </div>"
+                                 + "<span id='fe_anwser" + t + "'  style='color:red;'></span>"
+                                 + "<div> <hr /></div>"
+                                 + "</div>";
+                        }
+                        else {
+                            if (item.Type == 2)
+                            {
+                                var temp2 = "";
+                                var subitem;
+                                var temp = item.Answer;
+                                var lengthString = temp.length;
+                                var tempLength = temp.split(";").length;
+                                var checkedInt = temp.indexOf("[");
+                                tempString = temp.slice(checkedInt - 1, temp.length);
+                                subitem = tempString.slice(2, tempString.length - 8);
+                                tempKhac = temp.slice(0, 8);
+                                rows += "<div hidden><input type='text' id='tam" + t + "' value='" + tempKhac + "'/></div>";
+
+
+                                switch (checkedInt) {
+                                    case -1:
+                                        temp = temp;
+                                        break;
+                                    default:
+                                        temp = temp.replace(tempString, "");
+                                        break;
+
+                                }
+                                if (tempKhac.localeCompare("muckhac_") == 0) {
+                                    khacValue = temp.slice(8, temp.indexOf(" "));
+                                    temp = temp.slice(temp.indexOf(" ") + 1, temp.length);
+                                    var newFiel = document.createElement('div');
+
+                                    var rowKhac = "<div class='form-group'>"
+                                                  + "<div class='form-group'>"
+
+                                                  + "<div class='radio col-md-10'>"
+                                                  + "<label class='control-label' id='label' >"
+                                                  + "<input type='radio' name='radio-group" + t + "' id='radioID' class='radio1" + t + "' />Mục Khác: </label>"
+                                                  + "<input type='text' name='valueKhac' id='btnKhacValue" + t + "' class='text-danger' />"
+                                                  + "</div>"
+                                                  + "<div class='col-md-offset-2 col-md-10'>"
+                                                  + "<span id='fe_MucKhac" + t + "' style='color:red;'></span>"
+                                                  + "</div>"
+                                                  + "</div> </div>";
+
+                                }
+                                for (var j = 1; j <= tempLength; j++) {
+                                    var firstTempLength = temp.indexOf(";");
+                                    switch (firstTempLength) {
+                                        case -1:
+                                            subString = temp.slice(0, temp.length);
+                                            break;
+                                        default:
+                                            subString = temp.slice(0, firstTempLength);
+                                            temp = temp.replace(temp.slice(0, firstTempLength + 2), "");
+                                            break;
+
+                                    }
+
+                                    rows += "<div class='form-group'>"
+
+                                                      + "<div class='radio col-md-10'>"
+                                                      + "<label class='control-label' id='label" + t + j + "'>"
+                                                      + "<input type='radio' name='radio-group" + t + "' id='radioID" + j + "' class='radio1" + t + "' />" + subString + "</label>"
+                                                      + "</div>"
+                                                      + "</div>";
+                                }
+                                if (tempKhac.localeCompare("muckhac_") == 0) {
+                                    tempLength += 1;
+                                }
+                                rows += "<div hidden><input type='text' id='dem" + t + "' value='" + tempLength + "'/></div></div>";
+
+                            }
+                            if(item.Type == 3)
+                            {
+                                var temp2 = "";
+                                var subitem;
+                                var temp = item.Answer;
+                                var lengthString = temp.length;
+                                var tempLength = temp.split(";").length;
+                                var checkedInt = temp.indexOf("[");
+                                tempString = temp.slice(checkedInt - 1, temp.length);
+                                subitem = tempString.slice(2, tempString.length - 8);
+                                tempKhac = temp.slice(0, 8);
+                                rows += "<div hidden><input type='text' id='tam" + t + "' value='" + tempKhac + "'/></div>";
+
+
+                                switch (checkedInt) {
+                                    case -1:
+                                        temp = temp;
+                                        break;
+                                    default:
+                                        temp = temp.replace(tempString, "");
+                                        break;
+
+                                }
+                                if (tempKhac.localeCompare("muckhac_") == 0) {
+                                    khacValue = temp.slice(8, temp.indexOf(" "));
+                                    temp = temp.slice(temp.indexOf(" ") + 1, temp.length);
+                                    var newFiel = document.createElement('div');
+
+                                    var rowKhac = "<div class='form-group'>"
+                                                  + "<div class='form-group'>"
+                                                  + "<div class='radio col-md-10'>"
+                                                  + "<label class='control-label' id='labelCheck' >"
+                                                  + "<input type='checkbox' name='radio-group" + t + "' id='checkID' class='check1" + t + "' /> Mục Khác: </label>"
+                                                  + "<input type='text' name='valueKhac' id='btnKhacValueCheck" + t + "' class='text-danger' />"
+                                                  + "</div>"
+                                                  + "<div class='col-md-offset-2 col-md-10'>"
+                                                  + "<span id='fe_MucKhacCheck" + t + "' style='color:red;'></span>"
+                                                  + "</div>"
+                                                  + "</div> </div>";
+
+                                }
+                                for (var j = 1; j <= tempLength; j++) {
+                                    var firstTempLength = temp.indexOf(";");
+                                    switch (firstTempLength) {
+                                        case -1:
+                                            subString = temp.slice(0, temp.length);
+                                            break;
+                                        default:
+                                            subString = temp.slice(0, firstTempLength);
+                                            temp = temp.replace(temp.slice(0, firstTempLength + 2), "");
+                                            break;
+
+                                    }
+
+                                    rows += "<div class='form-group'>"
+
+                                                      + "<div class='radio col-md-10'>"
+                                                      + "<label class='control-label' id='labelCheck" + t + j + "'>"
+                                                      + "<input type='checkbox' name='radio-group" + t + "' id='checkID"+t + j + "' class='check1" + t + "' value='"+subString+"'/>" + subString + "</label>"
+                                                      + "</div>"
+                                                      + "</div>";
+                                }
+                                if (tempKhac.localeCompare("muckhac_") == 0) {
+                                    tempLength += 1;
+                                }
+                                rows += "<div hidden><input type='text' id='dem" + t + "' value='" + tempLength + "'/></div></div>";
+                            }
+                            if(item.Type ==4 )
+                            {
+                                rows += "<div class='form-group'>"
+
+                                                     + "<div class='radio col-md-10'>"
+                                                     +"<input type='date' id='dateType' />"
+                                                     + "</div>"
+                                                     + "</div></div>";
+                            }
+                            if(item.Type == 5)
+                            {
+                                var temp = item.Answer;
+                                var tempLength = temp.split(";").length;
+
+                                rows += "<div class='form-group'>"
+
+                                                  + "<div class='radio col-md-10'>"
+                                                  + "<select id='myselect'>";
+                                for (var j = 1; j <= tempLength; j++) {
+                                    var firstTempLength = temp.indexOf(";");
+                                    switch (firstTempLength) {
+                                        case -1:
+                                            subString = temp.slice(0, temp.length);
+                                            break;
+                                        default:
+                                            subString = temp.slice(0, firstTempLength);
+                                            temp = temp.replace(temp.slice(0, firstTempLength + 2), "");
+                                            break;
+
+                                    }
+                                    rows += "<option value ='"+subString+"' >"+subString+"</option>" 
+                                }
+                                rows+= "</select></div></div></div>"
+                            }
+                        }
+
+
+                        $("#addQuestions").append(rows);
+                        $("#addQuestions").append(rowKhac);
+                        
+                    }
+
+                });
+
+            },
+            error: function (x, y, z) {
+                alert(x + "\n" + y + "\n" + z);
+            }
+        });
+    });
+    $("#SubmitForm").click(function () {
+        for (var k = 1; k <= t; k++) {
+           var type = parseInt($("#type" + k).val());
+           var anwser = "";
+           checkUserid();
+           switch (type) {
+
+               case 1:
+                   checkText(k);
+                   if (checkText(k) == true && checkUserid()==true)
+                   {
+                       $.ajax({
+                           type: 'POST',
+                           url: '@Url.Action("AddAnwserDetail", "AnwserDetail", null)',
+                           contentType: 'application/json; charset=utf-8',
+                           data: JSON.stringify({
+                               QuestionId: parseInt($("#id" + k).val()),
+                               Detail: $("#anwser" + k).val(),
+                               UserId: parseInt($("#mailUser").val())
+                           })
+                       });
+                       break;
+                   }
+
+               case 2:
+                 
+                   var demCheck = parseInt($("#dem" + k).val());
+                   if ($("#tam"+k).val().localeCompare("muckhac_") == 0) {
+                       anwser = $("#btnKhacValue" + k).val();
+                       demCheck = demCheck - 1;
+                   }
+                   else {
+                       anwser = "";
+                   }
+                   var radiovalue = $(".radio1"+k+":checked").parent('label').text();
+                   var radioId = $(".radio1" + k + ":checked").parents('label').attr('id');
+
+                   if (radioId == "" || radioId == null)
+                   {
+                       alert("bạn chưa check");
+                   }
+                   if (radioId.localeCompare("label") == 0)
+                   {
+                       //alert(demCheck);
+                      
+                       checkMucKhac(k);
+                       if (checkMucKhac(k) == true && checkUserid()== true)
+                       {
+                           $.ajax({
+                               type: 'POST',
+                               url: '@Url.Action("AddAnwserDetail", "AnwserDetail", null)',
+                               contentType: 'application/json; charset=utf-8',
+                               data: JSON.stringify({
+                                   QuestionId: parseInt($("#id" + k).val()),
+                                   Detail: anwser,
+                                   UserId: parseInt($("#mailUser").val())
+                               })
+
+                           });
+                           break;
+                       }
+                   }
+                   else {
+                       anwser = radiovalue;
+                       if (checkUserid() == true)
+                       {
+                           $.ajax({
+                               type: 'POST',
+                               url: '@Url.Action("AddAnwserDetail", "AnwserDetail", null)',
+                               contentType: 'application/json; charset=utf-8',
+                               data: JSON.stringify({
+                                   QuestionId: parseInt($("#id" + k).val()),
+                                   Detail: anwser,
+                                   UserId: parseInt($("#mailUser").val())
+                               })
+
+                           });
+                           break;
+                       }
+
+
+                   }
+               case 3:
+                   
+                   var demCheck = parseInt($("#dem" + k).val());
+                  
+                  
+                   for (var c = 1; c < demCheck; c++) {
+                       if ($("#checkID" + k + c) .is(":checked"))
+                       {
+                           anwser += ";" + $("#checkID" + k + c + ":checked").parent('label').text();
+                          
+                       }
+                       }
+                      
+                  
+                   anwser = anwser.substring(1, anwser.length);
+                   
+                   var radioId = $(".check1" + k + ":checked").parents('label').attr('id');
+
+                  
+                  
+                   if (radioId == "" || radioId == null) {
+                       alert("bạn chưa check");
+                   }
+                   if (radioId.localeCompare("labelCheck") == 0) {
+                       anwser += ";" + $("#btnKhacValueCheck" + k).val();
+                       checkMucKhacCheckBox(k);
+                       if (checkMucKhacCheckBox(k) == true && checkUserid() == true) {
+                           $.ajax({
+                               type: 'POST',
+                               url: '@Url.Action("AddAnwserDetail", "AnwserDetail", null)',
+                               contentType: 'application/json; charset=utf-8',
+                               data: JSON.stringify({
+                                   QuestionId: parseInt($("#id" + k).val()),
+                                   Detail: anwser,
+                                   UserId: parseInt($("#mailUser").val())
+                               })
+
+                           });
+                           break;
+                       }
+                   }
+                   else {
+
+                       
+                       if (checkUserid() == true) {
+                           $.ajax({
+                               type: 'POST',
+                               url: '@Url.Action("AddAnwserDetail", "AnwserDetail", null)',
+                               contentType: 'application/json; charset=utf-8',
+                               data: JSON.stringify({
+                                   QuestionId: parseInt($("#id" + k).val()),
+                                   Detail: anwser,
+                                   UserId: parseInt($("#mailUser").val())
+                               })
+
+                           });
+                           break;
+                       }
+
+
+                   }
+               case 4:
+                 
+                   var text4 = document.getElementById("dateType").value;
+                   $.ajax({
+                       type: 'POST',
+                       url: '@Url.Action("AddAnwserDetail", "AnwserDetail", null)',
+                       contentType: 'application/json; charset=utf-8',
+                       data: JSON.stringify({
+                           QuestionId: parseInt($("#id" + k).val()),
+                           Detail: text4,
+                           UserId: parseInt($("#mailUser").val())
+                       })
+
+                   });
+                   break;
+               case 5:
+                   var text5 = document.getElementById("myselect").value;
+                  
+                   $.ajax({
+                       type: 'POST',
+                       url: '@Url.Action("AddAnwserDetail", "AnwserDetail", null)',
+                       contentType: 'application/json; charset=utf-8',
+                       data: JSON.stringify({
+                           QuestionId: parseInt($("#id" + k).val()),
+                           Detail: text5,
+                           UserId: parseInt($("#mailUser").val())
+                       })
+
+                   });
+                   break;
+
+           }
+
+        }
+
+        window.location.replace("/Questions/ViewAdmin/" + parseInt($("#formid" + t).val()) + "/");
+    });
+    function checkText(l) {
+
+            if ($("#anwser"+l).val().length == 0) {
+                $("#fe_anwser"+l).html("*Required");
+                return false;
+            }
+            else {
+                $("#fe_anwser"+l).html("");
+                return true;
+            }
+
+
+    };
+    function checkMucKhac(mk) {
+        if ($("#btnKhacValue"+mk).val().length == 0) {
+            $("#fe_MucKhac"+mk).html("*Required");
+            return false;
+        }
+        else {
+            $("#fe_MucKhac").html("");
+            return true;
+        }
+
+    };
+    function checkMucKhacCheckBox(mk) {
+        if ($("#btnKhacValueCheck" + mk).val().length == 0) {
+            $("#fe_MucKhacCheck" + mk).html("*Required");
+            return false;
+        }
+        else {
+            $("#fe_MucKhacCheck").html("");
+            return true;
+        }
+
+    };
+    function checkUserid()
+    {
+        if ($("#mailUser").val().length == 0) {
+            $("#fe_user").html("*required");
+            return false;
+        }
+        else
+        {
+            var regex = /^[0-9]+$/;
+            if (!$("#mailUser").val().match(regex))
+            {
+                $("#fe_user").html("UserId is Number");
+                return false;
+            }
+            $("#fe_user").html("");
+            return true;
+        }
+    }
+    function kiemTraCheck(m)
+    {
+       
+        var x = document.getElementsByName("radio-group"+m);
+        if(x.checked==false)
+        {
+            alert("Bạn chưa check");
+            return false;
+        }
+    }
+</script>
+<link href="~/Content/Site.css" rel="stylesheet" />

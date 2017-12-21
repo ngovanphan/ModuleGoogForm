@@ -1,0 +1,83 @@
+﻿@model IEnumerable<MvcGoogleForm.Models.Form>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<p>
+    @Html.ActionLink("Create Form", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+
+            <td>
+
+
+                @Html.ActionLink("Questions", "Index", "Questions", new { id = item.Id }, null) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }, null) |               
+                @Html.ActionLink("View User", "ViewEndUser", "Questions", new { id = item.Id }, null) |
+                @Html.ActionLink("View Admin", "ViewAdmin", "Questions", new { id = item.Id }, null)
+            </td>
+        </tr>
+    }
+
+</table>
+
+<div class="modal fade"
+     id="myModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <!-- empty -->
+    </div>
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.btn-add').click(function (e) {
+            /*
+            * hủy liên kết
+            *
+            * việc này quan trọng
+            * nếu không hủy liên kết, modal sẽ không được load đúng cách
+            * vì action sẽ trả về 1 trang html trống với partialview
+            *
+            * cách tương tự return false; cách này thực hiện ở cuối method
+            */
+
+            e.preventDefault();
+
+            var $modal = $('#myModal');
+            var $modalDialog = $('.modal-dialog');
+            var href = $(this).prop('href');
+            href = encodeURI(href); //encode để mã hóa trường hợp có khoảng trắng
+            //alert(href);
+
+            // không cho phép tắt modal khi click bên ngoài modal
+            var option = { backdrop: 'static' };
+
+            // kiểm tra (logic, điều kiện...)
+
+            // load modal
+            $modalDialog.load(href, function () {
+                $modal.modal(option, 'show');
+            });
+        });
+    });
+</script>

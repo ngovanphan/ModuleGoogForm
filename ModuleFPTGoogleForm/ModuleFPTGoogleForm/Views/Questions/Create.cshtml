@@ -1,0 +1,421 @@
+﻿@model MvcGoogleForm.Models.Question
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" id="addAppendField">
+        <h4>Question</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @*@Html.LabelFor(model => model.QuestionName, htmlAttributes: new { @class = "control-label col-md-2" })*@
+            <label for="QuestionName" class="control-label col-md-2">QuestionName:</label>
+            <div class="col-md-10">
+                @*@Html.EditorFor(model => model.QuestionName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.QuestionName, "", new { @class = "text-danger" })*@
+                <input type="text" class="text-dange form-control QuestionName" id="QuestionName" placeholder="Question Name" />
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <span id="fe_QuestionName" style="color:red;"></span>
+            </div>
+        </div>
+        <div class="form-group">
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.FormId, "FormId", htmlAttributes: new { @class = "control-label col-md-2" })
+
+            <div class="col-md-10">
+                @Html.DropDownList("FormId", null, htmlAttributes: new { @class = "form-control FormId", @id = "FormId" })
+                @Html.ValidationMessageFor(model => model.FormId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-9">
+                <select class="form-control" id="typeOption" name="typeOption">
+                    <option value="Text">Text</option>
+                    <option value="Radio">Radio</option>
+                    <option value="CheckBox">CheckBox</option>
+                    <option value="Date">Date</option>
+                    <option value="Dropdown">Dropdown</option>
+                </select>
+
+            </div>
+            @*<div class="col-md-10">
+                    @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+
+                </div>*@
+
+        </div>
+        <div class="form-group" id="anwserText">
+            <div class="col-md-2"></div>
+            <div class="col-md-10">
+                <input type="text" id="textAnwser1" placeholder="text anwser" class="text-danger" disabled />
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <span id="fe_QuestionText" style="color:red;"></span>
+            </div>
+
+        </div>
+        <div id="addAppend" class="form-group"></div>
+
+
+    </div>
+    <div class="form-group form-horizontal" id="addOther">
+
+    </div>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10 addButtonDiv">
+                <input type="button" id="createQuestion" class="btn-success createQuestion" value="Create" />
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        var counterText = 0;
+        var counterRadio = 0;
+        var counterCheckBox = 0;
+        var counterDropdown = 0;
+        var anwser = "";
+        $("#typeOption").change(function () {
+            var textOption = $("#typeOption option:selected").text();
+
+            var newdiv = document.createElement('div');
+            counterText = 0;
+            counterRadio = 0;
+            $("#addAppend").html("");
+            $(".fieldsAdd").html("");
+            $(".fieldsAdd").remove();
+            switch (textOption) {
+
+                case 'Text':
+                    $("#addAppend").hide();
+                    $("#addOther").html("");
+                    document.getElementById("textAnwser1").placeholder = "text Anwser";
+                    $("#anwserText").show();
+                    break;
+                case 'Radio':
+                    $("#anwserText").hide();
+                    $("#addOther").html("");
+                    $("#addAppend").show();
+
+                    counterRadio = 1;
+                    newdiv.innerHTML = "<div class='col-md-2'> <img src='~/Icon/RadioIcon.jpeg' /> </div>"
+                        + "<div class='col-md-10'><input type='text' placeholder='Text Radio" + (counterRadio) + "' id='RadioAnwser" + (counterRadio) + "' class='text-danger' />"
+                        + "<input type='button' class='btn-success addFiel' value='Add'/>"
+                        +"<input type='button' class='btn-success addKhac' value='Thêm khác' id='btnAddKhac' /> </div>"
+                        +" <div class='col-md-offset-2 col-md-10'>"
+                        + " <span id='fe_QuestionRadio"+counterRadio+"' style='color:red;'></span>"
+                        + " </div> </div>";
+                    break;
+                case 'CheckBox':
+                    $("#anwserText").hide();
+                    $("#addOther").html("");
+                    $("#addAppend").show();
+                    counterCheckBox = 1;
+                    newdiv.innerHTML = "<div class='col-md-2'> </div>"
+                        + "<div class='col-md-10'><input type='text' placeholder='Text CheckBox" + (counterCheckBox) + "' id='CheckBoxAnwser" + (counterCheckBox) + "' class='text-danger' />"
+                        + "<input type='button' class='btn-success addFielCheckBox' value='Add'/>"
+                        + "<input type='button' class='btn-success addKhac' value='Thêm khác' id='btnAddKhac' /> </div>"
+                        + " <div class='col-md-offset-2 col-md-10'>"
+                        + " <span id='fe_QuestionCheckBox" + counterCheckBox + "' style='color:red;'></span>"
+                        + " </div> </div>";
+                    break;
+                case 'Date':
+                    $("#addAppend").hide();
+                    $("#addOther").html("");
+                    document.getElementById("textAnwser1").placeholder = "Day,Month,year";
+                    //alert($("#textAnwser1").placeholder);
+                    $("#anwserText").show();
+
+                    break;
+                case 'Dropdown':
+                    $("#anwserText").hide();
+                    $("#addOther").html("");
+                    $("#addAppend").show();
+                    counterDropdown = 1;
+                    newdiv.innerHTML = "<div class='col-md-2'> </div>"
+                        + "<div class='col-md-10'><input type='text' placeholder='option" + (counterDropdown) + "' id='dropdownOpt" + (counterDropdown) + "' class='text-danger' />"
+                        + "<input type='button' class='btn-success addDropDownOpt' value='Add'/>"
+                        + "</div>"
+                        + " <div class='col-md-offset-2 col-md-10'>"
+                        + " <span id='fe_DropdownOpt" + counterDropdown + "' style='color:red;'></span>"
+                        + " </div> </div>";
+                    break;
+
+
+            }
+            $('#addAppend').append(newdiv);
+            $(".addFiel").click(function (e) {
+                e.preventDefault();
+                counterRadio++;
+                var newFiel = document.createElement('div');
+                newFiel.innerHTML = "<div class='form-group fieldsAdd' id='fieldAddC" + (counterRadio) + "'><div class='col-md-2'></div>"
+                          + "<div class='col-md-10'> <input type='text' id='RadioAnwser" + (counterRadio) + "' placeholder='Text Radio " + (counterRadio) + "' class='text-danger' />"
+                          + "<input type='button' class='btn-danger removeFiel' value='Remove' /> </div>"
+
+                          +" <div class='col-md-offset-2 col-md-10'>"
+                          +   " <span id='fe_QuestionRadio" + counterRadio + "' style='color:red;'></span>"
+                          + " </div> </div>";
+
+                $(newFiel).appendTo('#addAppendField');
+                $(".removeFiel").click(function () {
+
+
+                    $(this).parents('.fieldsAdd').remove();
+                    counterRadio--;
+                });
+
+            });
+            $(".addFielCheckBox").click(function (e) {
+                e.preventDefault();
+                counterCheckBox++;
+                var newFiel = document.createElement('div');
+                newFiel.innerHTML = "<div class='form-group fieldsAdd' id='fieldAddC" + (counterCheckBox) + "'><div class='col-md-2'></div>"
+                          + "<div class='col-md-10'> <input type='text' id='CheckBoxAnwser" + (counterCheckBox) + "' placeholder='Text CheckBox " + (counterCheckBox) + "' class='text-danger' />"
+                          + "<input type='button' class='btn-danger removeFiel' value='Remove' /> </div>"
+
+                          + " <div class='col-md-offset-2 col-md-10'>"
+                          + " <span id='fe_QuestionCheckBox" + counterCheckBox + "' style='color:red;'></span>"
+                          + " </div> </div>";
+
+                $(newFiel).appendTo('#addAppendField');
+                $(".removeFiel").click(function () {
+
+
+                    $(this).parents('.fieldsAdd').remove();
+                    counterCheckBox--;
+                });
+
+            });
+            $(".addDropDownOpt").click(function (e) {
+                e.preventDefault();
+                counterDropdown++;
+                var newFiel = document.createElement('div');
+                newFiel.innerHTML = "<div class='form-group fieldsAdd' id='fieldAddC" + (counterDropdown) + "'><div class='col-md-2'></div>"
+                          + "<div class='col-md-10'> <input type='text' id='dropdownOpt" + (counterDropdown) + "' placeholder='option" + (counterDropdown) + "' class='text-danger' />"
+                          + "<input type='button' class='btn-danger removeFiel' value='Remove' /> </div>"
+
+                          + " <div class='col-md-offset-2 col-md-10'>"
+                          + " <span id='fe_DropdownOpt" + counterDropdown + "' style='color:red;'></span>"
+                          + " </div> </div>";
+
+                $(newFiel).appendTo('#addAppendField');
+                $(".removeFiel").click(function () {
+
+
+                    $(this).parents('.fieldsAdd').remove();
+                    counterDropdown--;
+                });
+
+            });
+            $("#btnAddKhac").click(function () {
+                $("#btnAddKhac").hide();
+                var newFiel = document.createElement('div');
+                newFiel.innerHTML = "<div class='form-group fieldAddKhac' id='fieldAddKhac '><div class='col-md-2'></div>"
+                          + "<div class='col-md-10'> <input type='text'  placeholder='Thêm Khác' class='text-danger' disabled />"
+                          + "<input type='button' class='btn-danger removeFielKhac' value='Remove' /> </div></div>";
+
+
+
+                $(newFiel).appendTo('#addOther');
+                anwser = "muckhac_ ";
+                $(".removeFielKhac").click(function () {
+
+
+                    $(this).parents('.fieldAddKhac').remove();
+                    $("#btnAddKhac").show();
+
+                });
+            });
+
+        });
+
+
+        $("#createQuestion").click(function () {
+
+            var typeText = $("#typeOption option:selected").text();
+            var typeInt;
+
+            var idForm = parseInt($(".FormID option:selected").text());
+            checkName();
+            switch (typeText) {
+                case 'Text':
+                    typeInt = 1;
+                    anwser = anwser + $("#textAnwser1").val();
+
+
+                    break;
+                case 'Radio':
+                    typeInt = 2;
+
+                    for (var i = 1; i <= counterRadio; i++) {
+
+                        if (i == 1 && i == counterRadio) {
+                            anwser = anwser + $("#RadioAnwser" + i).val();
+                        }
+                        if (i >= 1 && i < counterRadio) {
+                            anwser = anwser + $("#RadioAnwser" + i).val() + "; ";
+                        }
+                        if (i != 1 && i == counterRadio) {
+                            anwser = anwser + $("#RadioAnwser" + i).val();
+                        }
+
+                    }
+                    checkRadio();
+                    break;
+                case 'CheckBox':
+                    typeInt = 3;
+
+                    for (var i = 1; i <= counterCheckBox; i++) {
+
+                        if (i == 1 && i == counterCheckBox) {
+                            anwser = anwser + $("#CheckBoxAnwser" + i).val();
+                        }
+                        if (i >= 1 && i < counterCheckBox) {
+                            anwser = anwser + $("#CheckBoxAnwser" + i).val() + "; ";
+                        }
+                        if (i != 1 && i == counterCheckBox) {
+                            anwser = anwser + $("#CheckBoxAnwser" + i).val();
+                        }
+
+                    }
+                    checkCheckBox();
+                    break;
+                case 'Date':
+                    typeInt = 4;
+                    anwser = anwser + $("#textAnwser1").val();
+                    break;
+                case 'Dropdown':
+                    typeInt = 5;
+
+                    for (var i = 1; i <= counterDropdown; i++) {
+
+                        if (i == 1 && i == counterDropdown) {
+                            anwser = anwser + $("#dropdownOpt" + i).val();
+                        }
+                        if (i >= 1 && i < counterDropdown) {
+                            anwser = anwser + $("#dropdownOpt" + i).val() + "; ";
+                        }
+                        if (i != 1 && i == counterDropdown) {
+                            anwser = anwser + $("#dropdownOpt" + i).val();
+                        }
+
+                    }
+                    checkDropdown();
+                    break;
+
+
+            }
+
+            if ((typeInt == 1 && checkName() == true) || (typeInt == 4 && checkName() == true) || (typeInt == 2 && checkRadio() == true && checkName() == true) || (typeInt == 3 && checkName() == true && checkCheckBox() == true) || (typeInt == 5 && checkName() == true && checkDropdown() == true))
+            {
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("AddNewQuestions", "Questions", null)',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify({
+                        QuestionName: $("#QuestionName").val(),
+                        Answer: anwser,
+                        Type: typeInt,
+                        FormId: parseInt($(".FormId option:selected").text())
+                    })
+
+                });
+                window.location.replace("/Questions/Index/" + parseInt($(".FormId option:selected").text()) + "/");
+            }
+
+
+
+        });
+        function checkName()
+        {
+            if($("#QuestionName").val().length == 0){
+                $("#fe_QuestionName").html("*Required");
+                return false;
+            }
+            else
+            {
+                $("#fe_QuestionName").html("");
+                return true;
+            }
+        }
+
+        function checkRadio() {
+            for (var i = 1; i <= counterRadio; i++) {
+                if($("#RadioAnwser"+i).val().length ==0)
+                {
+                    $("#fe_QuestionRadio"+i).html("*Required");
+                    return false;
+                }
+                else {
+                    $("#fe_QuestionRadio"+i).html("");
+
+                    return true;
+                }
+            }
+        };
+        function checkCheckBox() {
+            for (var i = 1; i <= counterCheckBox; i++) {
+                if ($("#CheckBoxAnwser" + i).val().length == 0) {
+                    $("#fe_QuestionCheckBox" + i).html("*Required");
+                    return false;
+                }
+                else {
+                    $("#fe_QuestionCheckBox" + i).html("");
+
+                    return true;
+                }
+            }
+        };
+        function checkDropdown() {
+            for (var i = 1; i <= counterDropdown; i++) {
+                if ($("#dropdownOpt" + i).val().length == 0) {
+                    $("#fe_DropdownOpt" + i).html("*Required");
+                    return false;
+                }
+                else {
+                    $("#fe_DropdownOpt" + i).html("");
+
+                    return true;
+                }
+            }
+        };
+        $("#goBack").click(function () {
+            window.history.back();
+
+        });
+    });
+</script>
+<div>
+    <input type="button" value="Back" id="goBack" />
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+</script>

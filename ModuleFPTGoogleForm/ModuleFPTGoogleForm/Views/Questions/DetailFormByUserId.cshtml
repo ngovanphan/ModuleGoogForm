@@ -1,0 +1,283 @@
+﻿
+@{
+    ViewBag.Title = "DetailFormByUserId";
+}
+
+<form>
+
+    <div class="form-horizontal" id="detailQuestionUser">
+      
+    </div>
+    <div class="form-horizontal">
+        
+    </div>
+    <div>
+        <input type="button" value="Back" id="goBack" />
+    </div>
+
+</form>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    var t = 1;
+
+    var temp2;
+    var tempString;
+    var khacValue = "";
+
+    var tempKhac = "";
+    $(document).ready(function () {
+
+        $.ajax({
+            url: '@Url.Action("GetALLQuestions", "Questions", new { id = @ViewBag.IdForm })',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    var counter = 0;
+                    var l = 0;
+                  
+                    var rows = "<div class='form-group'>"
+
+                       + "<div hidden><input type='text' id='id" + t + "' value='" + item.QuestionId + "'/><input type='text' id='name" + t + "' value='" + item.QuestionName + "'/> <input type='text' id='type" + t + "' value='" + item.Type + "' /><input type='text' id='formid" + t + "' value='" + item.FormId + "'/></div>"
+                      
+                       + "<div> <h4>  " + item.QuestionName + " </h4> </div>";
+                    var rowKhac;
+                    var tempLength;
+                    $.ajax({
+                       
+                        url: '/AnwserDetail/GetAnwserByUserIdQuestionId/' + @ViewBag.UserId + '?questionsId=' + item.QuestionId,
+                        dataType: 'json',
+                        success: function (data3) {
+
+                            $.each(data3, function (i3, item3) {
+                                if (item.Type == 1) {
+                                    rows += "<div> <input type='text' id='anwser" + t + "' value='" + item3.Detail + "' disabled/> </div>"
+                                         + "<div> <hr /></div>"
+                                         + "</div>";
+                                }
+                                else {
+                                    if (item.Type == 2) {
+                                        var temp2 = "";
+                                        var subitem;
+                                        var temp = item.Answer;
+                                        var lengthString = temp.length;
+                                        tempLength = temp.split(";").length;
+                                        var checkedInt = temp.indexOf("[");
+                                        tempString = temp.slice(checkedInt - 1, temp.length);
+                                        subitem = tempString.slice(2, tempString.length - 8);
+                                        tempKhac = temp.slice(0, 8);
+                                        rows += "<div hidden><input type='text' id='tam" + t + "' value='" + tempKhac + "'/></div>";
+
+                                        if (tempKhac.localeCompare("muckhac_") == 0) {
+                                            khacValue = temp.slice(8, temp.indexOf(" "));
+                                            temp = temp.slice(temp.indexOf(" ") + 1, temp.length);
+                                            var newFiel = document.createElement('div');
+
+                                             rowKhac = "<div class='form-group'><div class='form-group'>"
+
+                                                          + "<div class='radio col-md-10'>"
+                                                          + "<label class='control-label' id='label' >"
+                                                          + "<input type='radio' name='radio-group" + t + "' id='radioIDmk" + t + "' class='radio1" + t + "' disabled/>Mục Khác: </label>"
+                                                          + "<input type='text' name='valueKhac' id='btnKhacValue" + t + "' class='text-danger' value='" + khacValue + "' disabled />"
+                                                          + "</div>"
+                                                          + "<div class='col-md-offset-2 col-md-10'>"
+                                                          + "<span id='fe_MucKhac' style='color:red;'></span>"
+                                                          + "</div>"
+                                                          + "</div></div>";
+
+                                        }
+                                        switch (checkedInt) {
+                                            case -1:
+                                                temp = temp;
+                                                break;
+                                            default:
+                                                temp = temp.replace(tempString, "");
+                                                break;
+
+                                        }
+                                        for (var j = 1; j <= tempLength; j++) {
+                                            var firstTempLength = temp.indexOf(";");
+                                            switch (firstTempLength) {
+                                                case -1:
+                                                    subString = temp.slice(0, temp.length);
+                                                    break;
+                                                default:
+                                                    subString = temp.slice(0, firstTempLength);
+                                                    temp = temp.replace(temp.slice(0, firstTempLength + 2), "");
+                                                    break;
+
+                                            }
+
+                                            rows += "<div class='form-group'>"
+
+                                                              + "<div class='radio col-md-10'>"
+                                                              + "<label class='control-label' id='label" + t + j + "' disabled>"
+                                                              + "<input type='radio' name='radio-group" + t + "' id='radioID" + t + j + "' class='radio1" + t + "' disabled />" + subString + "</label>"
+                                                              + "</div>"
+                                                              + "</div>";
+
+                                        }
+                                        if (tempKhac.localeCompare("muckhac_") == 0) {
+                                            tempLength += 1;
+                                        }
+                                        rows += "<div hidden><input type='text' id='dem" + t + "' value='" + tempLength + "'/></div>";
+                                    }
+                                    if (item.Type == 3) {
+                                        var temp2 = "";
+                                        var subitem;
+                                        var temp = item.Answer;
+                                        var lengthString = temp.length;
+                                        tempLength = temp.split(";").length;
+                                        var checkedInt = temp.indexOf("[");
+                                        tempString = temp.slice(checkedInt - 1, temp.length);
+                                        subitem = tempString.slice(2, tempString.length - 8);
+                                        tempKhac = temp.slice(0, 8);
+                                        rows += "<div hidden><input type='text' id='tam" + t + "' value='" + tempKhac + "'/></div>";
+
+                                        if (tempKhac.localeCompare("muckhac_") == 0) {
+                                            khacValue = temp.slice(8, temp.indexOf(" "));
+                                            temp = temp.slice(temp.indexOf(" ") + 1, temp.length);
+                                            var newFiel = document.createElement('div');
+
+                                            var rowKhac = "<div class='form-group'><div class='form-group'>"
+
+                                                          + "<div class='radio col-md-10'>"
+                                                          + "<label class='control-label' id='labelCheck' >"
+                                                          + "<input type='checkbox' name='check-group" + t + "' id='checkmk" + t + "' class='check1" + t + "' disabled/>Mục Khác: </label>"
+                                                          + "<input type='text' name='valueKhac' id='btnKhacValueCheck" + t + "' class='text-danger' value='" + khacValue + "' disabled />"
+                                                          + "</div>"
+                                                          + "<div class='col-md-offset-2 col-md-10'>"
+                                                          + "<span id='fe_MucKhac' style='color:red;'></span>"
+                                                          + "</div>"
+                                                          + "</div></div>";
+
+                                        }
+                                        switch (checkedInt) {
+                                            case -1:
+                                                temp = temp;
+                                                break;
+                                            default:
+                                                temp = temp.replace(tempString, "");
+                                                break;
+
+                                        }
+                                        for (var j = 1; j <= tempLength; j++) {
+                                            var firstTempLength = temp.indexOf(";");
+                                            switch (firstTempLength) {
+                                                case -1:
+                                                    subString = temp.slice(0, temp.length);
+                                                    break;
+                                                default:
+                                                    subString = temp.slice(0, firstTempLength);
+                                                    temp = temp.replace(temp.slice(0, firstTempLength + 2), "");
+                                                    break;
+
+                                            }
+
+                                            rows += "<div class='form-group'>"
+
+                                                              + "<div class='radio col-md-10'>"
+                                                              + "<label class='control-label' id='labelCheck" + t + j + "' disabled>"
+                                                              + "<input type='checkbox' name='check-group" + t + "' id='CheckID" + t + j + "' class='check1" + t + "' disabled />" + subString + "</label>"
+                                                              + "</div>"
+                                                              + "</div>";
+
+                                        }
+                                        if (tempKhac.localeCompare("muckhac_") == 0) {
+                                            tempLength += 1;
+                                        }
+                                        rows += "<div hidden><input type='text' id='dem" + t + "' value='" + tempLength + "'/></div>";
+                                    }
+                                    if(item.Type==4)
+                                    {
+                                        rows += "<div class='form-group'>"
+
+                                                    + "<div class='radio col-md-10'>"
+                                                    + "<input type='date' id='dateType' value='"+item3.Detail+"' disabled/>"
+                                                    + "</div>"
+                                                    + "</div></div>";
+                                    }
+                                    if(item.Type ==5)
+                                    {
+                                        rows += "<div class='form-group'>"
+
+                                                    + "<div class='radio col-md-10'>"
+                                                    + "<select disabled><option value ='"+item3.Detail+"'>"+item3.Detail+"</option></select>"
+                                                    + "</div>"
+                                                    + "</div></div>";
+                                    }
+
+                                    
+
+
+                                }
+                                $("#detailQuestionUser").append(rows);
+                                $("#detailQuestionUser").append(rowKhac);
+                                if (tempKhac.localeCompare("muckhac_") == 0) {
+                                    tempLength--;
+                                }
+                                for (var k = 1; k <= tempLength; k++) {
+                                    
+                                    if (item.Type == 2)
+                                    {
+                                       
+                                        if ($("#label" + t + k).text().localeCompare(item3.Detail) == 0) {
+
+                                            $('input[id=radioID' + t + k + ']').prop('checked', true);
+                                            return;
+                                        }
+                                        if (item.Answer.indexOf(item3.Detail) == -1) {
+                                            $('input[id=radioIDmk' + t + ']').prop('checked', true);
+                                            $("#btnKhacValue" + t).val(item3.Detail);
+                                            return;
+                                        }
+                                    }
+                                    if (item.Type == 3)
+                                    {
+                                       
+                                            var str = item3.Detail;
+                                            while (k <= tempLength)
+                                            {
+                                               
+                                                if(item3.Detail.indexOf($("#labelCheck" + t + k).text()) != -1)
+                                                {
+                                                    $("#CheckID" + t + k).prop("checked", true);
+                                                    var tempstr = str.substring(0, $("#labelCheck" + t + k).text().length+1);
+                                                    str = str.replace(tempstr, "");
+                                                   
+                                                }
+                                                if(k==tempLength && str.length>0)
+                                                {
+                                                    $("#checkmk" + t).prop('checked', true);
+                                                    $("#btnKhacValueCheck" + t).val(str);
+                                                }
+                                                k++;
+                                            }
+                                          
+                                        
+                                       
+                                    }
+                                   
+                                }
+                                
+                            });
+                            t++;
+                        },
+                        error: function (x2, y2, z2) {
+                            alert(x2 + "\n" + y2 + "\n" + z2);
+                        }
+                    });               
+                });
+
+            },
+            error: function (x, y, z) {
+                alert(x + "\n" + y + "\n" + z);
+            }
+        });
+    });
+    $("#goBack").click(function () {
+        window.history.back();
+
+    });
+
+</script>
+<link href="~/Content/Site.css" rel="stylesheet" />

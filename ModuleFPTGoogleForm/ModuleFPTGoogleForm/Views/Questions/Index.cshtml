@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "Question";
+}
+<form>
+    <div class="page-header">
+        <a href="/Questions/Create" class="alert-link">Create Questions</a>
+    </div>
+    <div>
+        <table id="tableX" class="table table-hover">
+            <thead id="tableHead">
+                <tr>
+
+                    <th>QuestionId</th>
+                    <th>Form Id</th>
+                    <th>QuestionName</th>
+                    <th>Answer</th>
+                    <th>Type</th>
+
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</form>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+       
+        getALlQuestions();
+    });
+
+    function getALlQuestions() {
+        $("#tableBody").html("");
+        //alert($("#pageNumber").html());
+        var idF = parseInt(@ViewBag.IdForm);
+       // alert($("#pageNumber").html() + idF);
+        $.ajax({
+            @*url: '/Forms/GetALLQuestions/' +@ViewBag.IdForm +"/" + $("#pageNumber").html(),*@
+            url: '@Url.Action("GetALLQuestions", "Questions", new { id = @ViewBag.IdForm })' + '?page=' + $("#pageNumber").html(),
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    if (item.UserId == null)
+                    {
+                        var rows = "<tr>"
+                        + "<td>" + item.QuestionId + "</td>"
+                        + "<td>" + item.FormId + "</td>"
+                        + "<td>" + item.QuestionName + "</td>"
+                        + "<td>" + item.Answer + "</td>"
+                        + "<td>" + item.Type + "</td>"
+                        + "<td>" + "<a href='/Questions/Edit/" + item.QuestionId + "'>Edit </a> |"
+                       
+                        + "<a href='/Questions/Delete/" + item.QuestionId + "'>Delete </a> |"
+                        + "<a href='/Questions/Duplicate/" + item.QuestionId + "'>Duplicate </a></td>"
+                        + "</tr>";
+                        $("#tableBody").append(rows);
+                    }
+                    
+                });
+
+            },
+            error: function (x, y, z) {
+                alert(x + "\n" + y + "\n" + z);
+            }
+        });
+    }
+   
+</script>

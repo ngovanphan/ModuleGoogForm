@@ -1,0 +1,155 @@
+﻿@model MvcGoogleForm.Models.Question
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div class="form-horizontal" id="addFieldDetail">
+    <h4>Question</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.QuestionId)
+    <div class="form-group">
+        @Html.LabelFor(model => model.QuestionId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.QuestionId, new { htmlAttributes = new { @class = "form-control QuestionId", @disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.QuestionName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.QuestionName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.QuestionName, new { htmlAttributes = new { @class = "form-control QuestionName", @disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.QuestionName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+
+        <div class="col-md-9">
+            <select class="form-control" id="typeOptionEdit" name="typeOption" disabled>
+                <option value="Text">Text</option>
+                <option value="Radio">Radio</option>
+                <option value="CheckBox">CheckBox</option>
+                <option value="Date">Date</option>
+                <option value="Dropdown">Dropdown</option>
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.FormId, "FormId", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("FormId", null, htmlAttributes: new { @class = "form-control FormID", @disabled = "disabled" })
+            @Html.ValidationMessageFor(model => model.FormId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group" id="addOther" hidden>
+        <label class="control-label col-md-2">Mục khác: </label>
+        <div class="col-md-10">
+            <input type="text" id="mucKhacValue" disabled />
+        </div>
+    </div>
+    <div class="form-group" id="addAppendDetail">
+        @Html.LabelFor(model => model.Answer, htmlAttributes: new { @class = "control-label col-md-2" })
+
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Answer, new { htmlAttributes = new { @class = "textAnwserEdit1", @id = "textAnwserDetail1", @disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+
+</div>
+
+<input type="button" id="back" value="Back" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var intType = @ViewBag.Type;
+
+        if(intType == 2)
+        {
+
+            document.getElementById('typeOptionEdit').value = 'Radio';
+        }
+        if(intType == 3)
+        {
+
+            document.getElementById('typeOptionEdit').value = 'CheckBox';
+        }
+        if(intType == 4)
+        {
+
+            document.getElementById('typeOptionEdit').value = 'Date';
+        }
+        if(intType == 5)
+        {
+
+            document.getElementById('typeOptionEdit').value = 'Dropdown';
+        }
+        var temp = $("#textAnwserDetail1").val();
+        var lengthString = temp.length;
+        var tempLength = temp.split(";").length;
+        var lastTempLength = temp.lastIndexOf(";");
+        var checkedInt = temp.indexOf("[");
+        var tempKhac = temp.slice(0,8);
+        if(tempKhac.localeCompare("muckhac_")==0)
+        {
+            anwser = temp.slice(0,temp.indexOf(" ")+1);
+            temp = temp.slice(temp.indexOf(" ")+1,temp.length);
+            $("#mucKhacValue").val(anwser);
+            $("#addOther").removeAttr("hidden");
+
+
+        }
+        switch (checkedInt) {
+            case -1:
+                temp = temp;
+                break;
+            default:
+                tempString = temp.slice(checkedInt,temp.length);
+                temp = temp.replace(tempString,"");
+                break;
+
+        }
+
+        for (var i = 1; i < tempLength; i++) {
+            var newFiel = document.createElement('div');
+
+            newFiel.innerHTML = "<div class='form-group'>"
+            + "<label class='control-label col-md-2'> Anwser "+ (i+1)+"</label>"
+            +"<div class='col-md-10'>"
+            +"<input type='text' disabled id='textAnwserDetail"+(i+1)+"' class='text-danger'/></div></div>";
+            $(newFiel).appendTo('#addFieldDetail');
+        }
+        for (var j = 1; j <= tempLength; j++) {
+            var firstTempLength = temp.indexOf(";");
+            var subString;
+            switch (firstTempLength) {
+                case -1:
+                    subString = temp.slice(0, temp.length + 1);
+                    $("#textAnwserDetail" + (j)).val(subString);
+                    break;
+                default:
+                    subString = temp.slice(0, firstTempLength);
+                    $("#textAnwserDetail" + (j)).val(subString);
+                    temp = temp.replace(temp.slice(0, firstTempLength + 2), "");
+                    break;
+
+            }
+
+        }
+    });
+    $("#back").click(function(){
+        window.history.back();
+    });
+</script>
